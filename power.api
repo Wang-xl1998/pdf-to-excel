@@ -1,0 +1,42 @@
+syntax = "v1"
+
+info (
+	title:   "文件上传与数据存储API"
+	desc:    "处理不同公司上传的Excel文件，并将数据时间和功率存储到MySQL中，提供查询接口"
+	author:  "wxl"
+	date:    "2024年8月26日"
+	version: "v1"
+)
+
+type UploadRequest {
+	file    string `form:"file"` // 文件内容作为Base64字符串上传
+	company string `form:"company"` // 公司名称
+}
+
+type UploadResponse {
+	message string
+}
+
+type QueryRequest {
+	startTime string `form:"startTime"` // 查询开始时间，格式：YYYY-MM-DD HH:MM:SS
+	endTime   string `form:"endTime"` // 查询结束时间，格式：YYYY-MM-DD HH:MM:SS
+	company   string `form:"company"` // 公司名称
+}
+
+type PowerData {
+	time  string // 数据时间
+	power float64 // 功率
+}
+
+type QueryResponse {
+	data []PowerData
+}
+
+service PowerService {
+	@handler uploadFile
+	post /upload/ (UploadRequest) returns (UploadResponse)
+
+	@handler queryData
+	get /query/ (QueryRequest) returns (QueryResponse)
+}
+
